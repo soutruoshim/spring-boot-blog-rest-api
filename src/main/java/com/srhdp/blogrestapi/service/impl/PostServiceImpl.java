@@ -1,6 +1,7 @@
 package com.srhdp.blogrestapi.service.impl;
 
 import com.srhdp.blogrestapi.entity.Post;
+import com.srhdp.blogrestapi.exception.ResourceNotFoundException;
 import com.srhdp.blogrestapi.payload.PostDto;
 import com.srhdp.blogrestapi.repository.PostRepository;
 import com.srhdp.blogrestapi.service.PostService;
@@ -32,6 +33,29 @@ public class PostServiceImpl implements PostService {
     public List<PostDto> getAllPosts() {
         List<Post> posts = postRepository.findAll();
         return posts.stream().map(post -> mapToDto(post)).collect(Collectors.toList());
+    }
+
+    @Override
+    public PostDto getPostById(long id) {
+        Post post = postRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Post", "id", id));
+        return mapToDto(post);
+    }
+
+    @Override
+    public PostDto updatePost(PostDto postDto, long id) {
+        Post post = postRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Post", "id", id));
+        post.setTitle(postDto.getTitle());
+        post.setContent(postDto.getContent());
+        post.setDescription(postDto.getDescription());
+        Post updatePost = postRepository.save(post);
+
+        return mapToDto(updatePost);
+    }
+
+    @Override
+    public void deletePost(long id) {
+        Post post = postRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Post", "id", id));
+        postRepository.delete(post);
     }
 
     // convert entity to dto
