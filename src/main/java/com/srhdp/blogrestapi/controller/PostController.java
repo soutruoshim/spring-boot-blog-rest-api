@@ -1,6 +1,7 @@
 package com.srhdp.blogrestapi.controller;
 
 import com.srhdp.blogrestapi.payload.PostDto;
+import com.srhdp.blogrestapi.payload.PostResponse;
 import com.srhdp.blogrestapi.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,9 +24,19 @@ public class PostController {
         return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
     }
 
+//    @GetMapping
+//    public List<PostDto> getAllPosts(
+//            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+//            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize
+//    ){
+//        return postService.getAllPosts(Integer.parseInt(""+pageNo), Integer.parseInt(""+pageSize));
+//    }
     @GetMapping
-    public List<PostDto> getAllPosts(){
-        return postService.getAllPosts();
+    public PostResponse getAllPosts(
+            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize
+    ){
+        return postService.getAllPosts(Integer.parseInt(""+pageNo), Integer.parseInt(""+pageSize));
     }
 
     @GetMapping("/{id}")
