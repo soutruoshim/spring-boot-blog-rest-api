@@ -40,9 +40,13 @@ public class PostServiceImpl implements PostService {
 //        return posts.stream().map(post -> mapToDto(post)).collect(Collectors.toList());
 //    }
     @Override
-    public PostResponse getAllPosts(int pageNo, int pageSize, String sortBy) {
+    public PostResponse getAllPosts(int pageNo, int pageSize, String sortBy, String sortDir) {
 
-        PageRequest pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).descending());
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())?Sort.by(sortBy).ascending()
+                :Sort.by(sortBy).descending();
+
+        PageRequest pageable = PageRequest.of(pageNo, pageSize, sort);
+
         Page<Post> posts = postRepository.findAll(pageable);
         List<Post> listOfPost = posts.getContent();
         List<PostDto> content = listOfPost.stream().map(post -> mapToDto(post)).collect(Collectors.toList());
