@@ -1,7 +1,9 @@
 package com.srhdp.blogrestapi.controller;
 
 import com.srhdp.blogrestapi.payload.LoginDto;
+import com.srhdp.blogrestapi.payload.RegisterDto;
 import com.srhdp.blogrestapi.service.AuthService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,9 +19,15 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping(value = {"login", "sigin"})
+    @PostMapping(value = {"/login", "/sigin"})
     public ResponseEntity<String> login(@RequestBody LoginDto loginDto){
         String response = authService.login(loginDto);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping(value = {"/register", "/signup"})
+    public ResponseEntity<String> register(@RequestBody RegisterDto registerDto){
+        String response = authService.register(registerDto);
+        return new ResponseEntity<>(response,HttpStatus.CREATED);
     }
 }
