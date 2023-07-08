@@ -1,5 +1,6 @@
 package com.srhdp.blogrestapi.controller;
 
+import com.srhdp.blogrestapi.payload.JWTAuthResponse;
 import com.srhdp.blogrestapi.payload.LoginDto;
 import com.srhdp.blogrestapi.payload.RegisterDto;
 import com.srhdp.blogrestapi.service.AuthService;
@@ -20,9 +21,13 @@ public class AuthController {
     }
 
     @PostMapping(value = {"/login", "/sigin"})
-    public ResponseEntity<String> login(@RequestBody LoginDto loginDto){
-        String response = authService.login(loginDto);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<JWTAuthResponse> login(@RequestBody LoginDto loginDto){
+        String token = authService.login(loginDto);
+
+        JWTAuthResponse jwtAuthResponse = new JWTAuthResponse();
+        jwtAuthResponse.setAccessToken(token);
+
+        return ResponseEntity.ok(jwtAuthResponse);
     }
 
     @PostMapping(value = {"/register", "/signup"})
