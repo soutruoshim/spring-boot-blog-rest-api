@@ -48,7 +48,7 @@ public class PostController {
             name = "Bear Authentication"
     )
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("api/posts")
+    @PostMapping("api/v1/posts")
     public ResponseEntity<PostDto> createPost(@Valid @RequestBody PostDto postDto){
         return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
     }
@@ -68,7 +68,7 @@ public class PostController {
             responseCode = "200",
             description = "Http Status 200 SUCCESS"
     )
-    @GetMapping("api/posts")
+    @GetMapping("api/v1/posts")
     public PostResponse getAllPosts(
             @RequestParam(value = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NO, required = false) int pageNo,
             @RequestParam(value = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
