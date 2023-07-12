@@ -1,6 +1,8 @@
 package com.srhdp.blogrestapi.controller;
 
+import com.srhdp.blogrestapi.entity.Post;
 import com.srhdp.blogrestapi.payload.PostDto;
+import com.srhdp.blogrestapi.payload.PostDtoV2;
 import com.srhdp.blogrestapi.payload.PostResponse;
 import com.srhdp.blogrestapi.service.PostService;
 import com.srhdp.blogrestapi.utils.AppConstants;
@@ -14,10 +16,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/posts")
+//@RequestMapping("api/v1/posts") for all request with version 1
+//@RequestMapping("api/posts") for all request
+@RequestMapping()
 @Tag(
         name = "CRUD REST APIs for Post Resource"
 )
@@ -43,7 +48,7 @@ public class PostController {
             name = "Bear Authentication"
     )
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping
+    @PostMapping("api/posts")
     public ResponseEntity<PostDto> createPost(@Valid @RequestBody PostDto postDto){
         return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
     }
@@ -63,7 +68,7 @@ public class PostController {
             responseCode = "200",
             description = "Http Status 200 SUCCESS"
     )
-    @GetMapping
+    @GetMapping("api/posts")
     public PostResponse getAllPosts(
             @RequestParam(value = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NO, required = false) int pageNo,
             @RequestParam(value = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
@@ -81,13 +86,30 @@ public class PostController {
             responseCode = "200",
             description = "Http Status 200 SUCCESS"
     )
-    @GetMapping("/{id}")
+    @GetMapping("api/posts/{id}")
     public ResponseEntity<PostDto> getPostById(@PathVariable(name = "id") long id){
         return ResponseEntity.ok(postService.getPostById(id));
     }
 
+    @GetMapping("api/v2/posts/{id}")
+    public ResponseEntity<PostDtoV2> getPostByIdV2(@PathVariable(name = "id") long id){
+        PostDto postDto = postService.getPostById(id);
+        PostDtoV2 postDtoV2 = new PostDtoV2();
+        postDtoV2.setId(postDto.getId());
+        postDtoV2.setTitle(postDto.getTitle());
+        postDtoV2.setDescription(postDto.getDescription());
+        postDtoV2.setContent(postDto.getContent());
+        List<String> tags = new ArrayList<>();
+        tags.add("java");
+        tags.add("spring boot");
+        tags.add("aws");
+        postDtoV2.setTags(tags);
 
-    @GetMapping("/category/{id}")
+        return ResponseEntity.ok(postDtoV2);
+    }
+
+
+    @GetMapping("api/posts/category/{id}")
     public ResponseEntity<List<PostDto>> getPostsByCategory(@PathVariable("id") Long categoryId){
         List<PostDto> postDtos = postService.getPostsByCategory(categoryId);
         return ResponseEntity.ok(postDtos);
@@ -108,7 +130,7 @@ public class PostController {
             name = "Bear Authentication"
     )
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/{id}")
+    @PutMapping("api/posts/{id}")
     public ResponseEntity<PostDto> updatePost(@Valid @RequestBody PostDto postDto, @PathVariable(name = "id") long id){
         return new ResponseEntity<>(postService.updatePost(postDto, id), HttpStatus.OK);
     }
@@ -124,7 +146,7 @@ public class PostController {
             name = "Bear Authentication"
     )
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("api/posts/{id}")
     public ResponseEntity<String> deletePost(@PathVariable(name = "id") long id){
         postService.deletePost(id);
         return new ResponseEntity<>("Post Delete successfully", HttpStatus.OK);
