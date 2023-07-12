@@ -86,7 +86,7 @@ public class PostController {
             responseCode = "200",
             description = "Http Status 200 SUCCESS"
     )
-    @GetMapping("api/posts/{id}")
+    @GetMapping("api/v1/posts/{id}")
     public ResponseEntity<PostDto> getPostById(@PathVariable(name = "id") long id){
         return ResponseEntity.ok(postService.getPostById(id));
     }
@@ -103,6 +103,64 @@ public class PostController {
         tags.add("java");
         tags.add("spring boot");
         tags.add("aws");
+        postDtoV2.setTags(tags);
+
+        return ResponseEntity.ok(postDtoV2);
+    }
+
+    // with param
+    @GetMapping(value = "api/posts/{id}", params = "version=3")
+    public ResponseEntity<PostDtoV2> getPostByIdV3Param(@PathVariable(name = "id") long id){
+        PostDto postDto = postService.getPostById(id);
+        PostDtoV2 postDtoV2 = new PostDtoV2();
+        postDtoV2.setId(postDto.getId());
+        postDtoV2.setTitle(postDto.getTitle());
+        postDtoV2.setDescription(postDto.getDescription());
+        postDtoV2.setContent(postDto.getContent());
+        List<String> tags = new ArrayList<>();
+        tags.add("java");
+        tags.add("spring boot");
+        tags.add("aws");
+        tags.add("azure");
+        postDtoV2.setTags(tags);
+
+        return ResponseEntity.ok(postDtoV2);
+    }
+
+    // version with header
+    @GetMapping(value = "api/posts/{id}", headers = "X-API-VERSION=4")
+    public ResponseEntity<PostDtoV2> getPostByIdV4Header(@PathVariable(name = "id") long id){
+        PostDto postDto = postService.getPostById(id);
+        PostDtoV2 postDtoV2 = new PostDtoV2();
+        postDtoV2.setId(postDto.getId());
+        postDtoV2.setTitle(postDto.getTitle());
+        postDtoV2.setDescription(postDto.getDescription());
+        postDtoV2.setContent(postDto.getContent());
+        List<String> tags = new ArrayList<>();
+        tags.add("java");
+        tags.add("spring boot");
+        tags.add("aws");
+        tags.add("azure");
+        tags.add("Header");
+        postDtoV2.setTags(tags);
+
+        return ResponseEntity.ok(postDtoV2);
+    }
+    // version with content negotiation
+    @GetMapping(value = "api/posts/{id}", produces = "application/vnd.srhdp.v5+json")
+    public ResponseEntity<PostDtoV2> getPostByIdV5Negotiation(@PathVariable(name = "id") long id){
+        PostDto postDto = postService.getPostById(id);
+        PostDtoV2 postDtoV2 = new PostDtoV2();
+        postDtoV2.setId(postDto.getId());
+        postDtoV2.setTitle(postDto.getTitle());
+        postDtoV2.setDescription(postDto.getDescription());
+        postDtoV2.setContent(postDto.getContent());
+        List<String> tags = new ArrayList<>();
+        tags.add("java");
+        tags.add("spring boot");
+        tags.add("aws");
+        tags.add("azure");
+        tags.add("v5");
         postDtoV2.setTags(tags);
 
         return ResponseEntity.ok(postDtoV2);
